@@ -3,7 +3,7 @@ package org.example.springv3.user;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-
+import jakarta.validation.constraints.Size;
 public class UserRequest {
 
     @Data
@@ -21,5 +21,14 @@ public class UserRequest {
         public User toEntity() {
             return User.builder().username(username).password(password).email(email).build();
         }
+    }
+
+    @Data
+    public static class LoginDTO {
+        @NotEmpty
+        @Size(min = 2, max = 4)
+        private String username;
+        @NotEmpty
+        private String password;
     }
 }
