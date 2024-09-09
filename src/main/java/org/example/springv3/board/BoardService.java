@@ -51,8 +51,10 @@ public class BoardService {
     @Transactional
     public void 게시글쓰기(BoardRequest.SaveDTO saveDTO, User sessionUser) {
 
-        Board boardEntity = saveDTO.toEntity(sessionUser);
-        boardRepository.save(boardEntity);
+        Board board = saveDTO.toEntity(sessionUser);
+
+        // 조회 Board boardPS
+        boardRepository.save(board);
     }
 
     public Board 게시글수정화면(int id, User sessionUser) {
@@ -71,8 +73,20 @@ public class BoardService {
         if (board.getUser().getId() != sessionUser.getId()) {
             throw new Exception403("게시글 수정 권한이 없습니다.");
         }
+
         return board;
     }
+
+    public BoardResponse.DTO 게시글수정화면V2(int id, User sessionUser) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(()-> new Exception404("게시글을 찾을 수 없습니다"));
+
+        if (board.getUser().getId() != sessionUser.getId()) {
+            throw new Exception403("게시글 수정 권한이 없습니다.");
+        }
+        return new BoardResponse.DTO(board);
+    }
+
 
     @Transactional
     public void 게시글수정(int id, BoardRequest.UpdateDTO updateDTO, User sessionUser) {
@@ -90,12 +104,20 @@ public class BoardService {
 
     }
 
-    
+
     public BoardResponse.DetailDTO 게시글상세보기(User sessionUser, Integer boardId){
-        Board boardPS = boardRepository.mFindById(boardId)
+        // Board boardPS = boardRepository.mFindById(boardId)
+//        Board boardPS = boardRepository.mFindByIdWithReply(boardId)
+//                .orElseThrow(() -> new Exception404("게시글이 없습니다."));
+//        return boardPS;
+        Board boardPS = boardRepository.mFindByIdWithReply(boardId)
                 .orElseThrow(() -> new Exception404("게시글이 없습니다."));
+        return new BoardResponse.DetailDTO(boardPS, sessionUser);
+    }
 
-
-        return new BoardResponse.DetailDTO(boardPS,sessionUser);
+    public Board 게시글상세보기V3(User sessionUser, Integer boardId){
+        Board boardPS = boardRepository.mFindByIdWithReply(boardId)
+                .orElseThrow(() -> new Exception404("게시글이 없습니다."));
+        return boardPS;
     }
 }
