@@ -23,12 +23,18 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardQueryRepository boardQueryRepository;
 
-    public List<Board> 게시글목록보기() {
-        //Pageable pg = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
-        Sort sort = Sort.by(Sort.Direction.DESC, "id");
-        List<Board> boardList = boardRepository.findAll(sort);
+    public List<Board> 게시글목록보기(String title) {
+        // 이건 동적 쿼리가 아님, 어떤 경우 일 때 어떤 쿼리 사용하게 나눈 것 뿐
+        if(title == null) { // 검색 안할 때,
+            //Pageable pg = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+            Sort sort = Sort.by(Sort.Direction.DESC, "id");
+            List<Board> boardList = boardRepository.findAll(sort);
 //        List<Board> boardList = boardRepository.mFindAll(); // 써도 된다.
-        return boardList;
+            return boardList;
+        } else { // 검색 할 때, -> like 가 있는 쿼리를 때림
+            List<Board> boardList = boardRepository.mFindAll(title);
+            return boardList;
+        }
     }
 
 

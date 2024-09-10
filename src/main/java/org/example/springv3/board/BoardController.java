@@ -74,9 +74,12 @@ public class BoardController {
         return Resp.ok(users);
     }
 
+    // localhost:8080?title=제목
+    // get요청은 쿼리스트링 밖에 없음
     @GetMapping("/")
-    public String list(HttpServletRequest request) {
-        List<Board> boardList = boardService.게시글목록보기();
+    public String list(@RequestParam(name = "title", required = false) String title, HttpServletRequest request) {
+        System.out.println("title : " + title);
+        List<Board> boardList = boardService.게시글목록보기(title);
         request.setAttribute("models", boardList);
         return "board/list";
     }
