@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,18 +24,21 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardQueryRepository boardQueryRepository;
 
-    public List<Board> 게시글목록보기(String title) {
-        // 이건 동적 쿼리가 아님, 어떤 경우 일 때 어떤 쿼리 사용하게 나눈 것 뿐
+    public List<BoardResponse.DTO>게시글목록보기(String title) {
+
+        List<BoardResponse.DTO> dtos = new ArrayList<>(); // 빈 객체를 하나 만든다. 빈 컬렉션
+        List<Board> boardList = null;
         if(title == null) { // 검색 안할 때,
-            //Pageable pg = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
             Sort sort = Sort.by(Sort.Direction.DESC, "id");
-            List<Board> boardList = boardRepository.findAll(sort);
-//        List<Board> boardList = boardRepository.mFindAll(); // 써도 된다.
-            return boardList;
+            boardList = boardRepository.findAll(sort);
         } else { // 검색 할 때, -> like 가 있는 쿼리를 때림
-            List<Board> boardList = boardRepository.mFindAll(title);
-            return boardList;
+            boardList = boardRepository.mFindAll(title);
         }
+        for(Board board : boardList) { // entity board 를 DTO 에 옮겨보자.
+            BoardResponse.DTO dto = new BoardResponse.DTO(board);
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
 
