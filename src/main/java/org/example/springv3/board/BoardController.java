@@ -75,7 +75,7 @@ public class BoardController {
     }
 
     // localhost:8080?title=제목
-    // get요청은 쿼리스트링 밖에 없음
+    // get 요청은 쿼리스트링 밖에 없음
     @GetMapping("/")
     public String list(@RequestParam(name = "title", required = false) String title, HttpServletRequest request) {
         System.out.println("title : " + title);

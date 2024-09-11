@@ -15,6 +15,10 @@ public class Resp<T> { // 공통 응답 DTO
         return new Resp<>(200, "성공", body);
     }
 
+    public static <B> Resp<?> ok(B body, String msg){
+        return new Resp<>(200, msg, body);
+    }
+
     public static Resp<?> fail(Integer status, String msg){
         return new Resp<>(status, msg, null);
     }

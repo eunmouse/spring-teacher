@@ -14,9 +14,9 @@ public class BoardRepositoryTest {
     private BoardRepository boardRepository;
 
     @Test
-    public void mFIndAll_test() {
+    public void mFindAll_test(){
         // given
-        String title ="1";
+        String title = "제";
 
         // when
         List<Board> boardList = boardRepository.mFindAll(title);
