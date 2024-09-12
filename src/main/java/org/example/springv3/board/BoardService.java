@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.springv3.core.error.ex.Exception400;
 import org.example.springv3.core.error.ex.Exception403;
 import org.example.springv3.user.User;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,19 +24,31 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardQueryRepository boardQueryRepository;
 
-    public List<Board> 게시글목록보기(String title) {
+    public BoardResponse.PageDTO 게시글목록보기(String title, int page) {
         // 이건 동적 쿼리가 아님, 어떤 경우 일 때 어떤 쿼리 사용하게 나눈 것 뿐
+        Pageable pageable = PageRequest.of(page, 3, Sort.Direction.DESC, "id");
         if(title == null) { // 검색 안할 때,
-            //Pageable pg = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
-            Sort sort = Sort.by(Sort.Direction.DESC, "id");
-            List<Board> boardList = boardRepository.findAll(sort);
-//        List<Board> boardList = boardRepository.mFindAll(); // 써도 된다.
-            return boardList;
+//            Sort sort = Sort.by(Sort.Direction.DESC, "id");
+            Page<Board> boardPG = boardRepository.findAll(pageable);
+            return new BoardResponse.PageDTO(boardPG);
         } else { // 검색 할 때, -> like 가 있는 쿼리를 때림
-            List<Board> boardList = boardRepository.mFindAll(title);
-            return boardList;
+            Page<Board> boardPG = boardRepository.mFindAll(title, pageable);
+            return new BoardResponse.PageDTO(boardPG);
         }
     }
+
+//    public Page<Board> 게시글목록보기(BoardResponse.PageDTO pageDTO, String title, int page) {
+//        // 이건 동적 쿼리가 아님, 어떤 경우 일 때 어떤 쿼리 사용하게 나눈 것 뿐
+//        Pageable pageable = PageRequest.of(page, 3, Sort.Direction.DESC, "id");
+//        if(title == null) { // 검색 안할 때,
+////            Sort sort = Sort.by(Sort.Direction.DESC, "id");
+//            Page<Board> boardList = boardRepository.findAll(pageable);
+//            return boardList;
+//        } else { // 검색 할 때, -> like 가 있는 쿼리를 때림
+//            Page<Board> boardList = boardRepository.mFindAll(title, pageable);
+//            return boardList;
+//        }
+//    }
 
 
     @Transactional

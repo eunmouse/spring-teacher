@@ -10,6 +10,7 @@ import org.example.springv3.core.error.ex.ExceptionApi404;
 import org.example.springv3.core.util.Resp;
 import org.example.springv3.user.User;
 import org.example.springv3.user.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -74,15 +75,29 @@ public class BoardController {
         return Resp.ok(users);
     }
 
-    // localhost:8080?title=제목
-    // get 요청은 쿼리스트링 밖에 없음
+
     @GetMapping("/")
-    public String list(@RequestParam(name = "title", required = false) String title, HttpServletRequest request) {
-        System.out.println("title : " + title);
-        List<Board> boardList = boardService.게시글목록보기(title);
-        request.setAttribute("models", boardList);
+    public String list(@RequestParam(name = "title", required = false) String title,
+                       @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+                       HttpServletRequest request) {
+        BoardResponse.PageDTO pageDTO = boardService.게시글목록보기(title, page);
+        request.setAttribute("model", pageDTO);
         return "board/list";
     }
+
+    // localhost:8080?title=제목
+    // get 요청은 쿼리스트링 밖에 없음
+//    @GetMapping("/")
+//    public String list(@RequestParam(name = "title", required = false) String title,
+//                       @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+//                       HttpServletRequest request) {
+//
+//        Page<Board> boardPG = boardService.게시글목록보기(title, page);
+//        request.setAttribute("model", boardPG);
+//        request.setAttribute("prev", boardPG.getNumber()-1);
+//        request.setAttribute("next", boardPG.getNumber()+1);
+//        return "board/list";
+//    }
 
 
     @PostMapping("/api/board/{id}/delete")

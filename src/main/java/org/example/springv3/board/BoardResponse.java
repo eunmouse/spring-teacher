@@ -3,11 +3,66 @@ package org.example.springv3.board;
 import lombok.Data;
 import org.example.springv3.reply.Reply;
 import org.example.springv3.user.User;
+import org.springframework.data.domain.Page;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BoardResponse {
+
+    @Data
+    public static class PageDTO {
+        private Integer number; // 현재페이지
+        private Integer totalPage; // 전체페이지 개수
+        private Integer size; // 한페이지에 아이템 개수
+        private Boolean first;
+        private Boolean last;
+        private Integer prev; // 현재페이지 -1
+        private Integer next; // 현재페이지 +1
+
+        // [0,1,2, -> 0number]
+        // [3,4,5, -> 3number]
+        // [6,7,9, -> 6number]
+        // number = 0 (0,1,2)
+        // number = 1 (0,1,2)
+        // number = 2 (0,1,2)
+        // number = 3 (3,4,5)
+        // number = 4 (3,4,5)
+        // number = 5 (3,4,5)
+        // number = 6 (6,7,8)
+        private List<Integer> numbers = new ArrayList<>();
+        private List<Content> contents = new ArrayList<>();
+
+        public PageDTO(Page<Board> boardPG) {
+            this.number = boardPG.getNumber();
+            this.totalPage = boardPG.getTotalPages();
+            this.size = boardPG.getSize();
+            this.first = boardPG.isFirst();
+            this.last = boardPG.isLast();
+            this.prev = boardPG.getNumber()-1;
+            this.next = boardPG.getNumber()+1;
+            int temp = (number / 3)*3; // 0 -> 0, 3 -> 3, 6 -> 6
+
+            for(int i=temp; i<temp+3; i++){ // 0
+                this.numbers.add(i);
+            }
+            for(Board board : boardPG.getContent()) {
+                contents.add(new Content(board));
+            }
+
+        }
+
+        @Data
+        class Content {
+            private Integer id;
+            private String title;
+
+            public Content (Board board) {
+                this.id = board.getId();
+                this.title = board.getTitle();
+            }
+        }
+    }
 
     @Data
     public static class DetailDTO {
