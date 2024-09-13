@@ -10,6 +10,19 @@ import java.util.List;
 
 public class BoardResponse {
 
+    @Data // getter, setter, toString
+    public static class ListDTO {
+        private Integer id;
+        private String title;
+        private Long count;
+
+        public ListDTO(Integer id, String title, Long count) {
+            this.id = id;
+            this.title = title;
+            this.count = count;
+        }
+    }
+
     @Data
     public static class PageDTO {
         private Integer number; // 현재페이지
@@ -19,6 +32,7 @@ public class BoardResponse {
         private Boolean last;
         private Integer prev; // 현재페이지 -1
         private Integer next; // 현재페이지 +1
+        private String keyword; // 검색 제목
 
         // [0,1,2, -> 0number]
         // [3,4,5, -> 3number]
@@ -33,7 +47,10 @@ public class BoardResponse {
         private List<Integer> numbers = new ArrayList<>();
         private List<Content> contents = new ArrayList<>();
 
-        public PageDTO(Page<Board> boardPG) {
+
+        public PageDTO(Page<Board> boardPG, String title) {
+            this.keyword = title;
+
             this.number = boardPG.getNumber();
             this.totalPage = boardPG.getTotalPages();
             this.size = boardPG.getSize();
@@ -138,4 +155,5 @@ public class BoardResponse {
             this.content = board.getContent();
         }
     }
+
 }

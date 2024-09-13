@@ -30,10 +30,10 @@ public class BoardService {
         if(title == null) { // 검색 안할 때,
 //            Sort sort = Sort.by(Sort.Direction.DESC, "id");
             Page<Board> boardPG = boardRepository.findAll(pageable);
-            return new BoardResponse.PageDTO(boardPG);
+            return new BoardResponse.PageDTO(boardPG, "");
         } else { // 검색 할 때, -> like 가 있는 쿼리를 때림
             Page<Board> boardPG = boardRepository.mFindAll(title, pageable);
-            return new BoardResponse.PageDTO(boardPG);
+            return new BoardResponse.PageDTO(boardPG, title);
         }
     }
 
